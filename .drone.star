@@ -36,7 +36,6 @@ def notification(config):
         },
         "when": {
             "status": [
-                "success",
                 "failure",
             ],
         },
@@ -57,6 +56,7 @@ def notification(config):
         "depends_on": [],
         "trigger": {
             "ref": [
+                "refs/heads/master",
                 "refs/heads/release",
                 "refs/tags/**",
             ],
