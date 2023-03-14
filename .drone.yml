@@ -1,0 +1,96 @@
+---
+depends_on: []
+kind: pipeline
+name: testing
+platform:
+  arch: amd64
+  os: linux
+steps:
+- commands:
+  - make generate build
+  image: owncloudci/golang:1.19
+  name: build
+  pull: always
+- commands:
+  - make test
+  image: owncloudci/golang:1.19
+  name: test
+  pull: always
+trigger:
+  ref:
+  - refs/heads/master
+  - refs/heads/release
+  - refs/tags/v*
+  - refs/pull/**
+type: docker
+---
+depends_on:
+- testing
+kind: pipeline
+name: binaries-release
+platform:
+  arch: amd64
+  os: linux
+steps:
+- commands:
+  - make release
+  image: owncloudci/golang:1.19
+  name: binaries
+  pull: always
+  when:
+    ref:
+    - refs/heads/master
+    - refs/heads/release
+    - refs/tags/v*
+    - refs/pull/**
+- image: plugins/github-release:1
+  name: publish
+  pull: always
+  settings:
+    api_key:
+      from_secret: github_token
+    files:
+    - dist/release/*
+    overwrite: true
+    prerelease: false
+    title: refs/heads/master
+  when:
+    ref:
+    - refs/tags/v*
+trigger:
+  ref:
+  - refs/heads/master
+  - refs/heads/release
+  - refs/tags/v*
+  - refs/pull/**
+type: docker
+---
+clone:
+  disable: true
+depends_on:
+- testing
+- binaries-release
+kind: pipeline
+name: notification
+platform:
+  arch: amd64
+  os: linux
+steps:
+- image: plugins/slack
+  name: notify
+  settings:
+    channel: builds
+    webhook:
+      from_secret: private_rocketchat
+  when:
+    status:
+    - success
+    - failure
+trigger:
+  ref:
+  - refs/heads/release
+  - refs/tags/**
+  status:
+  - success
+  - failure
+type: docker
