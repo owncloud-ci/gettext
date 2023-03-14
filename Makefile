@@ -69,40 +69,24 @@ release-binaries: release-dirs
 	GOOS=linux \
 	GOARCH=amd64 \
 	go build \
-		-tags 'netgo $(TAGS)' \
-		-buildmode=pie \
-		-trimpath \
-		-ldflags '-extldflags "-static"' \
 		-o '$(DIST)/binaries/$(EXECUTABLE)-$(OUTPUT)-linux-amd64' \
 		./go-xgettext/
 
 	GOOS=linux \
 	GOARCH=arm64 \
 	go build \
-		-tags 'netgo $(TAGS)' \
-		-buildmode=pie \
-		-trimpath \
-		-ldflags '-extldflags "-static"' \
 		-o '$(DIST)/binaries/$(EXECUTABLE)-$(OUTPUT)-linux-arm64' \
 		./go-xgettext/
 	
 	GOOS=darwin \
 	GOARCH=amd64 \
 	go build \
-		-tags 'netgo $(TAGS)' \
-		-buildmode=pie \
-		-trimpath \
-		-ldflags '-extldflags "-static"' \
 		-o '$(DIST)/binaries/$(EXECUTABLE)-$(OUTPUT)-darwin-amd64' \
 		./go-xgettext/
 
 	GOOS=darwin \
 	GOARCH=arm64 \
 	go build \
-		-tags 'netgo $(TAGS)' \
-		-buildmode=pie \
-		-trimpath \
-		-ldflags '-extldflags "-static"' \
 		-o '$(DIST)/binaries/$(EXECUTABLE)-$(OUTPUT)-darwin-arm64' \
 		./go-xgettext/
 
